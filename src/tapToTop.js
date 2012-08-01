@@ -1,4 +1,6 @@
-YUI.add('tapToTop', function(Y) {
+YUI.add('tapToTop', function (Y) {
+
+    'use strict';
 
     // A regular link will scroll to the top just fine, but we want smooth, animated scroll,
     // maybe with easing even. And we only want to reveal this control after the user 
@@ -18,23 +20,23 @@ YUI.add('tapToTop', function(Y) {
             value: 'shown'
         }
     };
-    
+
     Y.extend(TapToTopPlugin, Y.Plugin.Base, {
-                
-        initializer: function() {
-            this.host = this.get('host');
-            
-            if (!this.host.one('#tapToTop')) {
-                this.host.append('<a id="tapToTop" href="#top" title="Top of page">Top of page<span class="circumflex"><span class="bar"></span><span class="bar"></span></span></a>');
+
+        initializer: function () {
+            var host = this.get('host');
+
+            if (!host.one('#tapToTop')) {
+                host.append('<a id="tapToTop" href="#top" title="Top of page">Top of page<span class="circumflex"><span class="bar"></span><span class="bar"></span></span></a>');
             }
-            
-            this.btn = this.host.one('#tapToTop');
-            
+
+            this.btn = host.one('#tapToTop');
+
             this.btnListener = this.btn.on('click', this._handleClick, this);
             this.windowListener = Y.on('scroll', this._handleWindowScroll, Y.config.win, this);
-            
+
             this.scrollAnimation = new Y.Anim({
-                node: this.host,
+                node: Y.config.doc,
                 easing: 'easeOut',
                 to: {
                     scrollTop: 0
@@ -42,38 +44,37 @@ YUI.add('tapToTop', function(Y) {
             });
         },
 
-        destructor: function() {
+        destructor: function () {
             this.btnListener.detach();
             this.windowListener.detach();
         },
-        
-        _handleClick: function(e) {
+
+        _handleClick: function (e) {
             e.preventDefault();
             this._scroll();
         },
-        
-        _scroll: function() {
+
+        _scroll: function () {
             this.scrollAnimation.run();
         },
-        
-        _show: function() {
+
+        _show: function () {
             this.btn.addClass(this.get('CSS_CLASS_SHOWN'));
         },
-        
-        _hide: function() {
+
+        _hide: function () {
             this.btn.removeClass(this.get('CSS_CLASS_SHOWN'));
         },
-        
-        _handleWindowScroll: function(e) {
+
+        _handleWindowScroll: function (e) {
             // listen for window scroll events, and when the window scrolls past n px, show the node
             if (e.currentTarget.get('pageYOffset') > this.get('TRIGGERING_DISTANCE')) {
                 this._show();
-            }
-            else {
+            } else {
                 this._hide();
             }
         }
-                
+
     });
 
     Y.TapToTopPlugin = TapToTopPlugin;
